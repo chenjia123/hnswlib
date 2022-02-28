@@ -81,7 +81,40 @@ public final class Jdk17DistanceFunctions {
                 nrv += v[i] * v[i];
             }
 
-            float similarity = dot / (float)(Math.sqrt(nru) * Math.sqrt(nrv));
+            float similarity = dot / (float) (Math.sqrt(nru) * Math.sqrt(nrv));
+            return 1 - similarity;
+        }
+    }
+
+    static class VectorFloat64CosineDistance implements DistanceFunction<float[], Float> {
+
+        private static final VectorSpecies<Float> SPECIES_FLOAT_64 = FloatVector.SPECIES_64;
+
+        @Override
+        public Float distance(float[] u, float[] v) {
+            FloatVector vecSum = FloatVector.zero(SPECIES_FLOAT_64);
+            FloatVector xSquareV = FloatVector.zero(SPECIES_FLOAT_64);
+            FloatVector ySquareV = FloatVector.zero(SPECIES_FLOAT_64);
+
+            int i = 0;
+            for (; i + SPECIES_FLOAT_64.length() <= u.length; i += SPECIES_FLOAT_64.length()) {
+                FloatVector vecU = FloatVector.fromArray(SPECIES_FLOAT_64, u, i);
+                FloatVector vecV = FloatVector.fromArray(SPECIES_FLOAT_64, v, i);
+                vecSum = vecU.fma(vecV, vecSum);
+                xSquareV = vecU.fma(vecU, xSquareV);
+                ySquareV = vecV.fma(vecV, ySquareV);
+            }
+            float dot = vecSum.reduceLanes(VectorOperators.ADD);
+            float nrv = ySquareV.reduceLanes(VectorOperators.ADD);
+            float nru = xSquareV.reduceLanes(VectorOperators.ADD);
+
+            for (; i < u.length; i++) {
+                dot += u[i] * v[i];
+                nru += u[i] * u[i];
+                nrv += v[i] * v[i];
+            }
+
+            float similarity = dot / (float) (Math.sqrt(nru) * Math.sqrt(nrv));
             return 1 - similarity;
         }
     }
@@ -114,7 +147,40 @@ public final class Jdk17DistanceFunctions {
                 nrv += v[i] * v[i];
             }
 
-            float similarity = dot / (float)(Math.sqrt(nru) * Math.sqrt(nrv));
+            float similarity = dot / (float) (Math.sqrt(nru) * Math.sqrt(nrv));
+            return 1 - similarity;
+        }
+    }
+
+    static class VectorFloatMaxCosineDistance implements DistanceFunction<float[], Float> {
+
+        private static final VectorSpecies<Float> SPECIES_FLOAT_MAX = FloatVector.SPECIES_MAX;
+
+        @Override
+        public Float distance(float[] u, float[] v) {
+            FloatVector vecSum = FloatVector.zero(SPECIES_FLOAT_MAX);
+            FloatVector xSquareV = FloatVector.zero(SPECIES_FLOAT_MAX);
+            FloatVector ySquareV = FloatVector.zero(SPECIES_FLOAT_MAX);
+
+            int i = 0;
+            for (; i + SPECIES_FLOAT_MAX.length() <= u.length; i += SPECIES_FLOAT_MAX.length()) {
+                FloatVector vecU = FloatVector.fromArray(SPECIES_FLOAT_MAX, u, i);
+                FloatVector vecV = FloatVector.fromArray(SPECIES_FLOAT_MAX, v, i);
+                vecSum = vecU.fma(vecV, vecSum);
+                xSquareV = vecU.fma(vecU, xSquareV);
+                ySquareV = vecV.fma(vecV, ySquareV);
+            }
+            float dot = vecSum.reduceLanes(VectorOperators.ADD);
+            float nrv = ySquareV.reduceLanes(VectorOperators.ADD);
+            float nru = xSquareV.reduceLanes(VectorOperators.ADD);
+
+            for (; i < u.length; i++) {
+                dot += u[i] * v[i];
+                nru += u[i] * u[i];
+                nrv += v[i] * v[i];
+            }
+
+            float similarity = dot / (float) (Math.sqrt(nru) * Math.sqrt(nrv));
             return 1 - similarity;
         }
     }
@@ -333,9 +399,13 @@ public final class Jdk17DistanceFunctions {
         }
     }
 
+    public static final DistanceFunction<float[], Float> VECTOR_FLOAT_64_COSINE_DISTANCE = new VectorFloat64CosineDistance();
+
     public static final DistanceFunction<float[], Float> VECTOR_FLOAT_128_COSINE_DISTANCE = new VectorFloat128CosineDistance();
 
     public static final DistanceFunction<float[], Float> VECTOR_FLOAT_256_COSINE_DISTANCE = new VectorFloat256CosineDistance();
+
+    public static final DistanceFunction<float[], Float> VECTOR_FLOAT_MAX_COSINE_DISTANCE = new VectorFloat256CosineDistance();
 
     public static final DistanceFunction<float[], Float> VECTOR_FLOAT_128_INNER_PRODUCT = new VectorFloat128InnerProduct();
 

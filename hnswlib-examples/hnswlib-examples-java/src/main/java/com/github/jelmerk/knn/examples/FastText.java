@@ -31,7 +31,8 @@ public class FastText {
 
     public static void main(String[] args) throws Exception {
 
-        Path file = TMP_PATH.resolve("cc.en.300.vec.gz");
+//        Path file = TMP_PATH.resolve("cc.en.300.vec.gz");
+        Path file = Paths.get("data/cc.en.300.vec.gz");
 
         if (!Files.exists(file)) {
             downloadFile(WORDS_FILE_URL, file);
