@@ -405,7 +405,7 @@ public final class Jdk17DistanceFunctions {
 
     public static final DistanceFunction<float[], Float> VECTOR_FLOAT_256_COSINE_DISTANCE = new VectorFloat256CosineDistance();
 
-    public static final DistanceFunction<float[], Float> VECTOR_FLOAT_MAX_COSINE_DISTANCE = new VectorFloat256CosineDistance();
+    public static final DistanceFunction<float[], Float> VECTOR_FLOAT_MAX_COSINE_DISTANCE = new VectorFloatMaxCosineDistance();
 
     public static final DistanceFunction<float[], Float> VECTOR_FLOAT_128_INNER_PRODUCT = new VectorFloat128InnerProduct();
 
